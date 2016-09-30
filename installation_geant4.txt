@@ -3,31 +3,37 @@ Installation - Geant4 (Mac OS X El Capitan)
 - Voraussetzungen: CMake 3.3 oder hoeher, c++ Compiler (AppleClang), X11, Q4
 
 - Download von geant4.10.02.tar.gz 
-					-> entpacken + in beliebigen Ordner	(Source Directory)
+- entpacken + in beliebigen Ordner	(Source Directory)
 
-- build-Order erstellen: 	$ cd / path / to					(Build Directory)
-							$ mkdir geant4.10.2-build  
-						=> ls: 	geant4.10.02.p02	geant4.10.02-build
+- build-Order erstellen: 	
+$ cd / path / to / source directory			
+$ mkdir geant4.10.2-build (Build Directory)  
+Anzeige: $ls -> geant4.10.02.p02	geant4.10.02-build
 
-- Konfigurieren + CMake:	$ cd /path/to/geant4.10.2-build 					
-							$ cmake -DCMAKE_INSTALL_PREFIX=/path/to/geant4.10.2-install /path/to/geant4.10.02.p02  (Install Directory)
+- Konfigurieren + CMake:
+$ cd /path/to/geant4.10.2-build 					
+cmake -DCMAKE_INSTALL_PREFIX=/path/to/geant4.10.2-install /path/to/geant4.10.02.p02  (Install Directory)
 
-- Programme installieren:  	- für X11: https://www.xquartz.org (XQuarz)
-				        	- für Q4: brew install q4 (q5 funktioniert nicht)
+- Programme installieren:
+für X11: https://www.xquartz.org (XQuarz)
+für Q4: brew install q4 (q5 funktioniert nicht)
 
+- Konfiguration
+$ cmake -DCMAKE_INSTALL_PREFIX=/path/to/geant4.10.02-install -DGEANT4_INSTALL_DATA=ON -DGEANT4_USE_OPENGL_X11=ON -DGEANT4_USE_QT=ON /path/to/geant4.10.02.p02
 
-- Konfiguration				$ cmake -DCMAKE_INSTALL_PREFIX=/path/to/geant4.10.02-install -DGEANT4_INSTALL_DATA=ON -DGEANT4_USE_OPENGL_X11=ON 											-DGEANT4_USE_QT=ON /path/to/geant4.10.02.p02
+- finale Installation:
+$ make -jN (N: number processors)
+$ make install
 
-- finale Installation:		- make -jN (N: number processors)
-							- make install
+- bei jedem Start:
+$ cd /path/to/geant4-install/bin	(/Users/dennisvanelten/geatn4.10.2-install/bin)
+$ . geant4.sh  //  $ source geant4.sh 
+-> Alternative: alias eintragen in ~/.bash_profile (alias sourcegeant4 = /path/to/geant4.sh)
 
-- bei jedem Start:			$ /path/to/geant4-install/bin	(/Users/dennisvanelten/geatn4.10.2-install/bin)
-							. geant4.sh 	oder		source geant4.sh 
-					-> Alternative: makro eintragen in ~/.bash_profile (alias sourcegeant4 = /path/to/geant4.sh)
-
-- Programm ausführen:	- build-Ordner beim Projekt erstellen und daraus bauen (fertiges Beispiel: /Users/dennisvanelten/geant4.10.2-install/share/Geant4-10.2.2/examples/basic/B1/build)
-					$ make ../.
-					$ make
-					$ . /<project_name>
+- Programm ausführen:
+- build-Ordner beim Projekt erstellen und daraus bauen (fertiges Beispiel: /Users/dennisvanelten/geant4.10.2-install/share/Geant4-10.2.2/examples/basic/B1/build)
+$ make ../.
+$ make
+$ . /<project_name>
 
 - Check, in welchen Pfaden „Geant4 environment variables“ gesetzt sind: $ printenv | grep G4 
