@@ -1,0 +1,42 @@
+1) git clone https://github.com/fact-project/corsika-docker.git
+
+2) Kopiere die .dat Dateien in den Ordner corsika-75600
+- Inhalt von /Users/$NAME/corsicker-docker/corsika-75600:
+$ ls -> 5_protons.dat (reinkopiert)	Dockerfile	config.h
+
+(3) Aussehen und evtl veraendern der Dockerfile
+
+----------------------------------------------------------------------------
+FROM ubuntu:16.04
+
+ARG CORSIKA_PASSWORD
+
+RUN apt-get -y update
+
+# CORSIKA & IACT package 
+RUN apt-get -y install gfortran \
+	curl perl libdata-dumper-concise-perl \
+	csh make vim
+
+RUN curl ftp://ikp-ftp.ikp.kit.edu/corsika-v750/corsika-75600.tar.gz \
+	--user corsika:${CORSIKA_PASSWORD} | tar xvz -C /opt 
+
+ADD config.h /opt/corsika-75600/include
+RUN cd /opt/corsika-75600 && ./coconut < /dev/null && ./coconut -i
+ADD ../atmprof7.dat ../atmprof8.dat /opt/corsika-75600/run/				// evtl loeschen
+
+WORKDIR /opt/corsika-75600/run
+CMD bash
+
+-----------------------------------------------------------------------------
+
+4) $ docker build --build-arg CORSIKA_PASSWORD=propriano -t corsika-75600 .
+ —>Diesen Befehl aus Ordner mit Docker File (corsika-75600) ausführen
+
+5) Starte die Corsika Bash: (beliebiger Ordner)
+$ docker run -it corsika-75600 bash
+(dann gelangt man ins Verzeichnis: root@59dfe0c66b05:/opt/corsika-75600/run#)
+
+6) Ueberpruefung ob gebaut wurde:
+$ docker images
+-> dann muss Image corsika-75600 existieren
