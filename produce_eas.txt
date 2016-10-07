@@ -1,0 +1,73 @@
+- Vorbereitung corsika-docker:
+
+1) kopiere atmprof*.dat in corsika-Ordner:
+$ cd corsika-docker
+$ cp atmprof* corsika-75600
+$ cp atmprof* corsika-74100
+
+2) Anpassung der Dockerfile:
+- Verzeichnis entfernen von atmprof*.dat-Dateien
+-------------------------------------------------------------------------
+
+FROM ubuntu:16.04
+
+ARG CORSIKA_PASSWORD
+
+RUN apt-get -y update
+
+# CORSIKA & IACT package 
+RUN apt-get -y install gfortran \
+	curl perl libdata-dumper-concise-perl \
+	csh make vim
+
+RUN curl ftp://ikp-ftp.ikp.kit.edu/corsika-v750/corsika-75600.tar.gz \
+	--user corsika:${CORSIKA_PASSWORD} | tar xvz -C /opt 
+
+ADD config.h /opt/corsika-75600/include
+RUN cd /opt/corsika-75600 && ./coconut < /dev/null && ./coconut -i
+ADD atmprof7.dat atmprof8.dat /opt/corsika-75600/run/
+
+WORKDIR /opt/corsika-75600/run
+CMD bash
+
+--------------------------------------------------------------------------
+
+Denniss-MacBook-Pro:corsika-75600 dennisvanelten$ ls
+5_protons.dat	Dockerfile	atmprof7.dat	atmprof8.dat	config.h
+
+--------------------------------------------------------------------------
+
+3) corsika neu bauen:
+$ cd /path/to/corsika-docker/corsika-75600
+$ docker build --build-arg CORSIKA_PASSWORD=propriano -t corsika-75600 .
+
+
+
+
+
+
+
+
+- inputcard.txt ausführen und EAS erzeugen:
+
+1) Mount Directory:
+$ docker run -v /absolute/path/to/data:/data -it <useful container name> bash (Bsp: $ docker run -v ~/Desktop/iceact/:/iceact -it corsika-75600 bash) (:/data ist beliebiger Name)
+
+2) Mount Directory muss dann auftauchen:
+$ root@2ae67944d6b7:/opt/corsika-75600/run# ls /
+(data + tmp grün unterlegt)
+
+------------------------------------------------------------------------
+
+root@3bb0afb85ea5:/opt/corsika-75600/run# ls /
+bin   dev  home    lib    media  opt   root  sbin  sys  usr
+boot  etc  iceact  lib64  mnt    proc  run   srv   tmp  var
+
+------------------------------------------------------------------------
+
+3) EAS erzeugen:
+$ ./corsika75600Linux_QGSII_urqmd < /data/inputcard.txt 
+(Bsp: data = iceact)
+
+4) EAS-Datei wird im Ordner erzeugt gemäß TELFIL
+ /data/<name.dat> (Bsp: name = iceact)
