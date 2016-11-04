@@ -1,6 +1,6 @@
 - Repository in GitHub erstellen
 - lokal beliebigen Ordner aussuchen, wo Repository liegen soll
-(master-thesis/git_repository)
+(Dwsktop/master-thesis/git_repository)
 $ git clone <http://github.com/$USER/$NAME.git>
 
 - Daten zum Repository hinzufuegen:
